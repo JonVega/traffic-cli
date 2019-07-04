@@ -1,8 +1,10 @@
 #include "traffic.h"
 
-int main(int argc, char **argv) /*TODO:add debug & version argument */ {
+int main(int argc, char **argv) {
 	
-	//TODO:add high score?
+	//TODO:add high score (runtime only - show on program exit?)
+	//TODO:add easy level editor 
+	//TODO:random stage selection
 	
 	if(argc >= 3) {
 		printf("Error: -v (version) or -c (changelog)\n");
@@ -10,7 +12,7 @@ int main(int argc, char **argv) /*TODO:add debug & version argument */ {
 	}
 	
 	if(argc == 2) {
-		if (!strcmp(argv[1], "-d")) {
+		if (!strcmp(argv[1], "-d")) { //TODO:complete debug mode (flags?)
 			printf("\ndebug mode goes here\n");
 		}
 	
@@ -30,7 +32,6 @@ int main(int argc, char **argv) /*TODO:add debug & version argument */ {
 			return 0;
 		}
 	}
-	
 
 	
 	unsigned char gameBoard[36] = "";
@@ -66,6 +67,7 @@ int main(int argc, char **argv) /*TODO:add debug & version argument */ {
 		
 		else if(userVehicle == 'i' || userVehicle == 'I') { //show instructions
 			displayInstructions();
+			drawBoard(gameBoard);
 		}
 		
 		else if(userVehicle == '-') {
@@ -89,11 +91,15 @@ int main(int argc, char **argv) /*TODO:add debug & version argument */ {
 			printf("\nStage %d Complete  -  # of Attempts: %d\n",currentStage-1, numberMovesAttempted);
 			totalAttempts = totalAttempts + numberMovesAttempted;
 			numberMovesAttempted = 0;
-			
+
+			/* Was going to use this when the user completes 5 stages.
+			   Since many levels can be added (infinite), I may use it for runtime statistics
+			   
 			if(currentStage == 5) {
 				printf("\n\nA WINNER IS YOU!\n\nTotal Attempts: %d\n\n", totalAttempts);
 				return 0;
 			}
+			*/
 			
 			if(createBoard(gameBoard, currentStage) != 0) {
 				return 1;

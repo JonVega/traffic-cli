@@ -2,7 +2,7 @@
 
 A logic puzzle game, which is a clone of the game "Rush Hour", where the goal is to move the red car to the exit. The game was created in C language.
 
-![](programExecution.gif)
+![](githubAssets/programExecution.gif)
 
 ## Getting Started
 

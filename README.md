@@ -11,5 +11,7 @@ I wrote the C code as portable as possible, and the 'src' folder can be compiled
 ## Ideas To Implement
 
 • More levels increasing in difficulty
+
 • Save high score to a text file
+
 • Random levels, instead of progressing to next level

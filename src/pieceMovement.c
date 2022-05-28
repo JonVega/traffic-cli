@@ -1,6 +1,6 @@
 #include "traffic.h"
 
-void moveOneSquare(unsigned char userVehicle, unsigned char userDirection, unsigned char *n1, unsigned char *n2, unsigned char *n3, unsigned char *n4, unsigned char *n5, unsigned char *n6) {
+void moveOneSquare(char userVehicle, char userDirection, char *n1, char *n2, char *n3, char *n4, char *n5, char *n6) {
 	
 	//LEFT
 	if(userDirection == 'L') {
@@ -11,7 +11,7 @@ void moveOneSquare(unsigned char userVehicle, unsigned char userDirection, unsig
 				*n6 = '.';
 			}
 			else {
-				printf("\n\a BOOP!   *** Move was attempted, but couldn't be completed. ***\n\n");
+				printf("\n BOOP!   *** Move was attempted, but couldn't be completed. ***\n\n");
 			}
 		}
 		
@@ -323,7 +323,7 @@ void moveOneSquare(unsigned char userVehicle, unsigned char userDirection, unsig
 
 //--------------------------------------------------------------------
 
-void handlePieces(unsigned char userVehicle, unsigned char userDirection, unsigned int userDistance, unsigned char *n1, unsigned char *n2, unsigned char *n3, unsigned char *n4, unsigned char *n5, unsigned char *n6) {
+void handlePieces(char userVehicle, char userDirection, int userDistance, char *n1, char *n2, char *n3, char *n4, char *n5, char *n6) {
 	for(int i = 0; i < userDistance; i++) {
 		moveOneSquare(userVehicle, userDirection, n1, n2, n3, n4, n5, n6);
 	}
@@ -331,7 +331,7 @@ void handlePieces(unsigned char userVehicle, unsigned char userDirection, unsign
 
 //--------------------------------------------------------------------
 
-void makeMove(unsigned char userVehicle, unsigned char userDirection, unsigned int userDistance, unsigned int currentStage, unsigned char *gameBoard) {
+void makeMove(char userVehicle, char userDirection, int userDistance, int currentStage, char *gameBoard) {
 	if( (userDirection == 'R') || (userDirection == 'L') ) {
 		//row 1
 		if(userVehicle == gameBoard[0] || userVehicle == gameBoard[1] || userVehicle == gameBoard[2] || userVehicle == gameBoard[3] || userVehicle == gameBoard[4] || userVehicle == gameBoard[5]) {

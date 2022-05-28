@@ -1,105 +1,182 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Traffic (version 1.0) - logic puzzle game for the command-line
+ * 
+ * author: Jonathan Vega
+ * purpose:	A fun little game to challenge your mind using logic
+ * usage: run the program and instructions will appear
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #include "traffic.h"
 
-int main(int argc, char **argv) {
-	
-	//TODO:add high score (runtime only - show on program exit?)
-	//TODO:add easy level editor 
-	//TODO:random stage selection
-	
-	if(argc >= 3) {
-		printf("Error: -v (version) or -c (changelog)\n");
-		return 1;
-	}
-	
-	if(argc == 2) {
-		if (!strcmp(argv[1], "-d")) { //TODO:complete debug mode (flags?)
-			printf("\ndebug mode goes here\n");
-		}
-	
-		else if ( (!strcmp(argv[1], "-v")) || (!strcmp(argv[1], "--version")) ) {
-			printf("version 0.9799-5\n");
-			return 0;
-		}
-	
-		else if ( (!strcmp(argv[1], "-c")) || (!strcmp(argv[1], "--changelog")) ) {
-			printf("\nChange Log\n\n");
-			printf("0.9799-5  |  June 10, 2019\n\n");
-			printf("Missing Debug Mode\n");
-			printf("Lots of TODO in code (high score?, stage selector, etc)\n");
-			printf("All code is in one file (bad design)\n");
-		
-			printf("\n");
-			return 0;
-		}
-	}
+char makeCharacterUpper(char charInput) {
+	return charInput = charInput - 32;
+}
 
-	
-	unsigned char gameBoard[36] = "";
-	unsigned int currentStage = 1;
-	
-	unsigned int numberMovesAttempted = 0;
-	unsigned int totalAttempts = 0;
-	
-	unsigned char userVehicle = '\0'; 	//[C]
-	unsigned char userDirection = '\0'; //[D]
-	unsigned int userDistance = 0; 		//[N]
-	
-	if(createBoard(gameBoard, currentStage) != 0) {
-		return 1;
+int isValidInput(char userInput, char *gameBoard, unsigned int debugModeFlag) {
+	if(debugModeFlag == 1) {
+		printf("<ASCII CODE: %d + CHAR: %c>\n", userInput, userInput);
 	}
-	
-	displayInstructions();
-	
-	while(userVehicle != 'x' && userVehicle != 'X') { //exits loop & terminates
-		
-		drawBoard(gameBoard);
-		
-		printf("Attempts: %d | >> ", numberMovesAttempted);
-		scanf(" %c", &userVehicle);
-		
-		if(userVehicle == 'x' || userVehicle == 'X') {
-			break;
-		}
-		
-		else if(userVehicle == 'q' || userVehicle == 'Q') {
-			break;
-		}
-		
-		else if(userVehicle == 'i' || userVehicle == 'I') { //show instructions
-			displayInstructions();
-			drawBoard(gameBoard);
-		}
-		
-		else if(userVehicle == '-') {
-			if(createBoard(gameBoard, currentStage) != 0) {
+	for(int i = 0; i < 36; i++) {
+		if(userInput == gameBoard[i]) {
+			if(userInput == '.') {
+				return 0;
+			}
+			else {
 				return 1;
 			}
+		}
+	}
+	
+	if(userInput == 'U' || userInput == 'D' || userInput == 'L' || userInput == 'R' || userInput == '+' || userInput == 'Q' || userInput == 'X' || userInput == '?' || userInput == '-' || userInput == '@') {
+		return 1;
+	}
+	
+	else {
+		return 0;
+	}
+}
+
+/* MAIN */
+int main(int argc, char **argv) {
+	
+/* VARIABLES */
+	char gameBoard[BOARDSIZE];
+	unsigned int currentStage = 1;
+	unsigned int numberMovesAttempted = 0;
+	unsigned int debugModeFlag = 0;
+	
+	char userVehicle = '\0';
+	char userDirection = '\0';
+	unsigned int userDistance = 0;
+	
+/* PROGRAM ARGUMENTS */
+	//display program version
+	if(argc > 1) {
+		if ( (!strcmp(argv[1], "-v")) || (!strcmp(argv[1], "--version")) ) {
+			printf("version 1.0\n");
+			return 0;
+		}
+		
+		else if(!strcmp(argv[1], "-d")) {
+			debugModeFlag = 1;
+		}
+		
+		else {
+			currentStage = atoi(argv[1]);
+		}
+	}
+/* CREATE BOARD */
+	//create board and layout pieces
+	if(createBoard(gameBoard, currentStage) != 0) {
+		return 1; //FATAL ERROR - EXIT PROGRAM
+	}
+	
+	if(debugModeFlag != 1) {
+		displayLogo();
+	}
+	
+	else {
+		printf("<BOARD STRING: %s>\n", gameBoard);
+	}
+	
+/* MAIN PROGRAM LOOP */
+	while(userVehicle != 'X') { //exits loop & terminates
+		
+		//print the board and pieces to the screen
+		printf("  < stage %d >\n", currentStage);
+		drawBoard(gameBoard);
+		//display if in DEBUG MODE
+		if(debugModeFlag == 1) {
+			printf("<DEBUG MODE> - ");
+		}
+		printf("Attempts: %d | >> ", numberMovesAttempted);
+		fflush(stdin); //clear buffer if user enters multiple chars
+		
+/* VEHICLE */
+		scanf(" %c", &userVehicle);
+		//if vehicle from A-Z is lower-case, then make upper-case
+		if(userVehicle > 96 && userVehicle < 123) {
+			userVehicle = makeCharacterUpper(userVehicle);
+		}		
+		
+		//check if vehicle is valid move from ALL moves in program
+		if(isValidInput(userVehicle, gameBoard, debugModeFlag) == 1) {
+			//exit the program
+			if(userVehicle == 'X' || userVehicle == 'Q') {			
+				break;
+			}
+		
+			//show instructions
+			else if(userVehicle == '?') {
+				displayInstructions();
+				continue;
+			}
+			
+			else if(userVehicle == '@') {
+				displayLicense();
+				displayProgramInfo();
+				continue;
+			}
+		
+			//reset the current board
+			else if(userVehicle == '-') {
+				if(createBoard(gameBoard, currentStage) != 0) {
+					return 1;
+				}
+				numberMovesAttempted = 0; //reset the counter
+				continue;
+			}
+			
+			else if(userVehicle == '+') {
+				printf("Custom Board Creation\n");
+				printf("[enter 36 characters - blanks are a '.']\n\n>> ");
+				for(int i = 0; i < 36; i++) {
+					scanf(" %c", &userVehicle);
+					gameBoard[i] = userVehicle;
+				}
+				currentStage = 0;
+				numberMovesAttempted = 0; //reset the counter
+				continue;
+			}
+		}
+		
+		else {
+			printf("!!! INVALID VEHICLE !!!\n\n");
 			continue;
 		}
 		
-		//TODO:convert lower-case to upper automatically
+/* DIRECTION */
 		scanf(" %c", &userDirection);
+		//check if vehicle is valid move from ALL moves in program
+		if(userDirection > 96 && userDirection < 123) {
+			userDirection = makeCharacterUpper(userDirection);
+		}
 		
+		if(isValidInput(userDirection, gameBoard, debugModeFlag) != 1) {
+			printf("!!! INVALID DIRECTION !!!\n\n");
+			continue;
+		}
+		
+/* DISTANCE */
 		scanf(" %d", &userDistance);
 		
+		//expects input from 1 to 9
+		if(!(userDistance > 0) || !(userDistance < 10)) {
+			printf("!!! INVALID DISTANCE !!!\n\n");
+			continue;
+		}
+		
+		//attempt piece movement
 		makeMove(userVehicle, userDirection, userDistance, currentStage, gameBoard);
 		
 		numberMovesAttempted++;
 		
+		//when the RED car reaches the goal
 		if(gameBoard[17] == 'R') {
 			currentStage++;
-			printf("\nStage %d Complete  -  # of Attempts: %d\n",currentStage-1, numberMovesAttempted);
-			totalAttempts = totalAttempts + numberMovesAttempted;
+			printf("\nStage %d Complete  -  # of Attempts: %d\n\n",currentStage-1, numberMovesAttempted);
 			numberMovesAttempted = 0;
-
-			/* Was going to use this when the user completes 5 stages.
-			   Since many levels can be added (infinite), I may use it for runtime statistics
-			   
-			if(currentStage == 5) {
-				printf("\n\nA WINNER IS YOU!\n\nTotal Attempts: %d\n\n", totalAttempts);
-				return 0;
-			}
-			*/
 			
 			if(createBoard(gameBoard, currentStage) != 0) {
 				return 1;
